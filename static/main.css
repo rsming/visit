@@ -13,3 +13,8 @@ figure.overwrite-width-10rem {
 .footer.is-transparent {
     background-color: transparent !important;
 }
+
+span.transparent-tile {
+	color: #000000;
+    background: rgba(76, 175, 80, 0.5);
+}

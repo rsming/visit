@@ -2,6 +2,7 @@
 
 Static HTML/CSS page dedicated to the International Hobbit Day (September the 22nd)
 
+```
 =================================================
         _     _ _            _        _   _      
  __   _(_)___(_) |_      ___| |_ __ _| |_(_) ___ 
@@ -10,6 +11,7 @@ Static HTML/CSS page dedicated to the International Hobbit Day (September the 22
    \_/ |_|___/_|\__|    |___/\__\__,_|\__|_|\___|
                                                  
 =================================================
+```
 
 ### Resources
 

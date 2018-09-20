@@ -2,12 +2,11 @@
     background-image: url(./visit.jpg);
     background-size: cover;
     background-position: right;
-    height: 100vh;
     background-attachment: fixed;
 }
 
-figure.overwrite-width-10rem {
-	width: 10rem;
+figure.overwrite-width-7rem {
+	width: 7rem;
 }
 
 .footer.is-transparent {

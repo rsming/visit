@@ -1,6 +1,6 @@
 # visit
 
-Static HTML/CSS page dedicated to the International Hobbit Day (September the 22nd)
+Static HTML/CSS, React and Vue applications dedicated to the International Hobbit Day (September the 22nd)
 
 ```
 ====================

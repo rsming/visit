@@ -1,0 +1,47 @@
+```
+=================================================
+        _     _ _            _        _   _      
+ __   _(_)___(_) |_      ___| |_ __ _| |_(_) ___ 
+ \ \ / / / __| | __|____/ __| __/ _` | __| |/ __|
+  \ V /| \__ \ | ||_____\__ \ || (_| | |_| | (__ 
+   \_/ |_|___/_|\__|    |___/\__\__,_|\__|_|\___|
+                                                 
+=================================================
+```
+
+= visit-static =
+
+Static HTML/CSS page dedicated to the International Hobbit Day (September the 22nd)
+
+== docker ==
+
+```
+docker build --tag rsming/visit:1.0 .
+docker run --name hobbit.visit --detach --publish 8085:80 rsming/visit:1.0
+```
+
+http://localhost:8085
+
+```
+docker login --username=rsming
+docker push rsming/visit:1.0
+docker push rsming/visit:latest
+```
+
+== cloudformation ==
+
+```
+aws help
+aws ec2 describe-instances --region us-east-1
+aws cloudformation list-stacks --region us-east-1
+aws cloudformation validate-template --template-body file://visit.cform.yaml --region us-east-1
+aws cloudformation deploy --template-file ./visit.cform.yaml --stack-name visit --parameter-overrides EnvironmentName=dev --region us-east-1
+aws cloudformation delete-stack --stack-name visit --region us-east-1
+aws cloudformation describe-stack-events --stack-name visit --region us-east-1
+```
+
+== resources ==
+
+ - [Docker Hub](https://hub.docker.com/repository/docker/rsming/visit)
+ - [Bulma](https://bulma.io/)
+ - [Font Awesome](https://fontawesome.com/)

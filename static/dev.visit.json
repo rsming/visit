@@ -1,0 +1,22 @@
+[
+    {
+        "ParameterKey": "EnvironmentName",
+        "ParameterValue": "dev"
+    },
+    {
+        "ParameterKey": "HotedZoneName",
+        "ParameterValue": "shrugcoding.click."
+    },
+    {
+        "ParameterKey": "Subdomain",
+        "ParameterValue": "visit"
+    },
+    {
+        "ParameterKey": "VpcCIDR",
+        "ParameterValue": "10.192.0.0/16"
+    },
+    {
+        "ParameterKey": "PublicSubnet1CIDR",
+        "ParameterValue": "10.192.10.0/24"
+    }
+]

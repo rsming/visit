@@ -16,8 +16,9 @@ Static HTML/CSS page dedicated to the International Hobbit Day (September the 22
 == docker ==
 
 ```
+docker stop hobbit.visit && docker rm hobbit.visit && docker image rm rsming/visit:1.0
 docker build --tag rsming/visit:1.0 .
-docker run --name hobbit.visit --detach --publish 8085:80 rsming/visit:1.0
+docker run --name hobbit.visit --detach --publish 8085:80 --publish 8443:443 rsming/visit:1.0
 ```
 
 http://localhost:8085
@@ -35,13 +36,23 @@ aws help
 aws ec2 describe-instances --region us-east-1
 aws cloudformation list-stacks --region us-east-1
 aws cloudformation validate-template --template-body file://visit.cform.yaml --region us-east-1
-aws cloudformation deploy --template-file ./visit.cform.yaml --stack-name visit --parameter-overrides EnvironmentName=dev --region us-east-1
+aws cloudformation create-stack --template-body file://visit.cform.yaml --parameters file://dev.visit.json --stack-name visit --region us-east-1
 aws cloudformation delete-stack --stack-name visit --region us-east-1
 aws cloudformation describe-stack-events --stack-name visit --region us-east-1
 ```
 
+== ssl (wrong way - self signed certificate) ==
+
+```
+keytool -genkey -keyalg RSA -alias visit -keystore ./nginx/ssh/visit.jks -storepass password -keysize 2048 \
+  -dname "CN=Bilbo Baggins,OU=Dwarf Company, O=War of the ring, L=Under the hill, ST=Hobbiton, C=ME"
+keytool -export -alias visit -keystore nginx/ssh/visit.jks -rfc -file nginx/ssh/visit.X509_certificate.crt
+openssl pkcs12 -in nginx/ssh/visit.jks -nodes -nocerts -out nginx/ssh/visit.private.key
+```
+
 == resources ==
 
- - [Docker Hub](https://hub.docker.com/repository/docker/rsming/visit)
- - [Bulma](https://bulma.io/)
- - [Font Awesome](https://fontawesome.com/)
+  - [Docker Hub] (https://hub.docker.com/repository/docker/rsming/visit)
+  - [Bulma] (https://bulma.io/)
+  - [Font Awesome] (https://fontawesome.com/)
+  - [xip.io] http://xip.io/

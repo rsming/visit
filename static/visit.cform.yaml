@@ -1,13 +1,19 @@
-Description:  -\_(8))_/- visit cloudformation template. 
-  This template deploys a VPC, with a pair of public and private subnets spread
-  across two Availability Zones. It deploys an internet gateway, with a default
-  route on the public subnets. It deploys a pair of NAT gateways (one in each AZ),
-  and default routes for them in the private subnets.
+Description:  '¯\_(ツ)_/¯ visit cloudformation template.'
 
 Parameters:
+
   EnvironmentName:
     Description: An environment name that is prefixed to resource names
     Type: String
+
+  HotedZoneName:
+    Description: Do not forget to add '.' (period) at the end. For example "shrugcoding.click."
+    Type: String
+    Default: shrugcoding.click.
+
+  Subdomain:
+    Type: String
+    Default: visit
 
   VpcCIDR:
     Description: Please enter the IP range (CIDR notation) for this VPC
@@ -19,12 +25,23 @@ Parameters:
     Type: String
     Default: 10.192.10.0/24
 
-  PublicSubnet2CIDR:
-    Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
-    Type: String
-    Default: 10.192.11.0/24
+  # PublicSubnet2CIDR:
+  #   Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
+  #   Type: String
+  #   Default: 10.192.11.0/24
 
 Resources:
+
+  visitDNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName : !Ref HotedZoneName
+      Name: !Join [ '', [ !Ref Subdomain, ., !Ref HotedZoneName ]]
+      TTL: '900'
+      Type: A
+      ResourceRecords:
+      - !GetAtt ec2VisitView.PublicIp
+
   VPC:
     Type: AWS::EC2::VPC
     Properties:
@@ -59,16 +76,16 @@ Resources:
         - Key: Name
           Value: !Sub ${EnvironmentName} Public Subnet (AZ1)
 
-  PublicSubnet2:
-    Type: AWS::EC2::Subnet
-    Properties:
-      VpcId: !Ref VPC
-      AvailabilityZone: !Select [ 1, !GetAZs  '' ]
-      CidrBlock: !Ref PublicSubnet2CIDR
-      MapPublicIpOnLaunch: true
-      Tags:
-        - Key: Name
-          Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
+  # PublicSubnet2:
+  #   Type: AWS::EC2::Subnet
+  #   Properties:
+  #     VpcId: !Ref VPC
+  #     AvailabilityZone: !Select [ 1, !GetAZs  '' ]
+  #     CidrBlock: !Ref PublicSubnet2CIDR
+  #     MapPublicIpOnLaunch: true
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Sub ${EnvironmentName} Public Subnet (AZ2)
 
   ec2VisitView:
     Type: AWS::EC2::Instance
@@ -137,11 +154,11 @@ Resources:
       RouteTableId: !Ref PublicRouteTable
       SubnetId: !Ref PublicSubnet1
 
-  PublicSubnet2RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      RouteTableId: !Ref PublicRouteTable
-      SubnetId: !Ref PublicSubnet2
+  # PublicSubnet2RouteTableAssociation:
+  #   Type: AWS::EC2::SubnetRouteTableAssociation
+  #   Properties:
+  #     RouteTableId: !Ref PublicRouteTable
+  #     SubnetId: !Ref PublicSubnet2
 
   NoIngressSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -158,15 +175,18 @@ Outputs:
 
   PublicSubnets:
     Description: A list of the public subnets
-    Value: !Join [ ",", [ !Ref PublicSubnet1, !Ref PublicSubnet2 ]]
+    Value: !Join [ ",", [ !Ref PublicSubnet1 ]]
+  # PublicSubnets:
+  #   Description: A list of the public subnets
+  #   Value: !Join [ ",", [ !Ref PublicSubnet1, !Ref PublicSubnet2 ]]
 
   PublicSubnet1:
     Description: A reference to the public subnet in the 1st Availability Zone
     Value: !Ref PublicSubnet1
 
-  PublicSubnet2:
-    Description: A reference to the public subnet in the 2nd Availability Zone
-    Value: !Ref PublicSubnet2
+  # PublicSubnet2:
+  #   Description: A reference to the public subnet in the 2nd Availability Zone
+  #   Value: !Ref PublicSubnet2
 
   NoIngressSecurityGroup:
     Description: Security group with no ingress rule

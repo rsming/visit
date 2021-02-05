@@ -104,7 +104,7 @@ Resources:
         amazon-linux-extras install docker
         service docker start
         usermod -a -G docker ec2-user
-        docker run -d -p 80:80 rsming/visit:1.0
+        docker run -d -p 80:80 -p 443:443 rsming/visit:1.0
       Tags:
         - Key: name
           Value: visit.view
@@ -121,6 +121,10 @@ Resources:
         - IpProtocol: tcp
           FromPort: 80
           ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
           CidrIp: 0.0.0.0/0
         - IpProtocol: tcp
           FromPort: 22

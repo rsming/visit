@@ -8,11 +8,11 @@
        ¯\_(ツ)_/¯ :: [html / css / bulma]
 ```
 
-= visit-static =
+== visit-static ==
 
 Static HTML/CSS page dedicated to the International Hobbit Day (September the 22nd)
 
-== docker ==
+=== docker ===
 
 ```
 docker stop hobbit.visit && docker rm hobbit.visit && docker image rm rsming/visit:1.0
@@ -28,19 +28,25 @@ docker push rsming/visit:1.0
 docker push rsming/visit:latest
 ```
 
-== cloudformation ==
+=== steps to deploy to aws ===
+
+  . create ssl certificate: (see below)
+  . create docker image: `docker build --tag rsming/visit:1.0 .`
+  . push image to docker hub: `docker push rsming/visit:1.0`
+  . create aws cloudformation stack: (see `cloudformation/readme.adoc`)
+
+=== ssl certificate with certbot ===
 
 ```
-aws help
-aws ec2 describe-instances --region us-east-1
-aws cloudformation list-stacks --region us-east-1
-aws cloudformation validate-template --template-body file://visit.cform.yaml --region us-east-1
-aws cloudformation create-stack --template-body file://visit.cform.yaml --parameters file://dev.visit.json --stack-name visit --region us-east-1
-aws cloudformation delete-stack --stack-name visit --region us-east-1
-aws cloudformation describe-stack-events --stack-name visit --region us-east-1
+docker run --rm -it \
+  --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+  --volume "$PWD/ssh:/etc/letsencrypt" certbot/dns-route53 certonly \
+  --dns-route53 \
+  -d visit.shrugcoding.click -m "rustam.mingazov@gmail.com" --agree-tos
 ```
 
-== ssl (wrong way - self signed certificate) ==
+=== ssl (wrong way - self signed certificate) ===
 
 ```
 keytool -genkey -keyalg RSA -alias visit -keystore ./nginx/ssh/visit.jks -storepass password -keysize 2048 \
@@ -49,7 +55,7 @@ keytool -export -alias visit -keystore nginx/ssh/visit.jks -rfc -file nginx/ssh/
 openssl pkcs12 -in nginx/ssh/visit.jks -nodes -nocerts -out nginx/ssh/visit.private.key
 ```
 
-== resources ==
+=== resources ===
 
   - [Docker Hub] (https://hub.docker.com/repository/docker/rsming/visit)
   - [Bulma] (https://bulma.io/)

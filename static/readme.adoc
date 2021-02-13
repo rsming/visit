@@ -17,10 +17,10 @@ Static HTML/CSS page dedicated to the International Hobbit Day (September the 22
 ```
 docker stop hobbit.visit && docker rm hobbit.visit && docker image rm rsming/visit:1.0
 docker build --tag rsming/visit:1.0 .
-docker run --name hobbit.visit --detach --publish 8085:80 --publish 8443:443 rsming/visit:1.0
+docker run --name hobbit.visit --detach --publish 8080:80 --publish 8443:443 rsming/visit:1.0
 ```
 
-http://localhost:8085
+https://localhost:8443
 
 ```
 docker login --username=rsming
@@ -46,14 +46,16 @@ docker run --rm -it \
   -d visit.shrugcoding.click -m "rustam.mingazov@gmail.com" --agree-tos
 ```
 
-=== ssl (wrong way - self signed certificate) ===
+=== k8s ===
 
 ```
-keytool -genkey -keyalg RSA -alias visit -keystore ./nginx/ssh/visit.jks -storepass password -keysize 2048 \
-  -dname "CN=Bilbo Baggins,OU=Dwarf Company, O=War of the ring, L=Under the hill, ST=Hobbiton, C=ME"
-keytool -export -alias visit -keystore nginx/ssh/visit.jks -rfc -file nginx/ssh/visit.X509_certificate.crt
-openssl pkcs12 -in nginx/ssh/visit.jks -nodes -nocerts -out nginx/ssh/visit.private.key
+minikube start
+minikube tunnel
+kubectl create -f ./k8s --save-config --record
+kubectl delete -f ./k8s
 ```
+
+access site with `service/service-visit` `EXTERNAL-IP`
 
 === resources ===
 

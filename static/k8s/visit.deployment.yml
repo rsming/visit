@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: visit
+spec:
+  selector:
+    matchLabels:
+      app: pod-visit
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: pod-visit
+    spec:
+      containers:
+      - name: pod-visit
+        image: rsming/visit:1.0
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "128Mi" #128 MB
+            cpu: "100m" #100 millicpu (.1 cpu or 10% of the cpu)

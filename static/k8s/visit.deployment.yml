@@ -16,7 +16,7 @@ spec:
       - name: pod-visit
         image: rsming/visit:1.0
         ports:
-        - containerPort: 80
+        - containerPort: 443
         resources:
           limits:
             memory: "128Mi" #128 MB

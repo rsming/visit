@@ -17,6 +17,7 @@ spec:
         image: rsming/visit:1.0
         ports:
         - containerPort: 443
+        - containerPort: 80
         resources:
           limits:
             memory: "128Mi" #128 MB

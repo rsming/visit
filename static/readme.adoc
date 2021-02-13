@@ -12,28 +12,40 @@
 
 Static HTML/CSS page dedicated to the International Hobbit Day (September the 22nd)
 
-=== docker ===
+=== build and push docker image ===
 
-```
-docker stop hobbit.visit && docker rm hobbit.visit && docker image rm rsming/visit:1.0
-docker build --tag rsming/visit:1.0 .
-docker run --name hobbit.visit --detach --publish 8080:80 --publish 8443:443 rsming/visit:1.0
-```
+  . create ssl certificate: (see below: *ssl certificate with certbot*)
+  . create docker image: `docker build --tag rsming/visit:1.0 .`
+  . login to docker hub: `docker login --username=rsming`
+  . push image to docker hub: `docker push rsming/visit:1.0`
+
+=== run with docker ===
+
+`docker run --name hobbit.visit --detach --publish 8080:80 --publish 8443:443 rsming/visit:1.0`
 
 https://localhost:8443
 
+=== run with cloudformation ===
+
 ```
-docker login --username=rsming
-docker push rsming/visit:1.0
-docker push rsming/visit:latest
+aws cloudformation create-stack --template-body file://cloudformation/visit.cform.yaml --parameters file://cloudformation/dev.visit.json --stack-name visit --region us-east-1
+aws cloudformation delete-stack --stack-name visit --region us-east-1
 ```
 
-=== steps to deploy to aws ===
+https://visit.shrugcoding.click
 
-  . create ssl certificate: (see below)
-  . create docker image: `docker build --tag rsming/visit:1.0 .`
-  . push image to docker hub: `docker push rsming/visit:1.0`
-  . create aws cloudformation stack: (see `cloudformation/readme.adoc`)
+=== run with kubernetes ===
+
+```
+minikube start
+minikube tunnel
+kubectl create -f ./k8s --save-config --record
+kubectl delete -f ./k8s
+```
+
+access site with `service/service-visit` `EXTERNAL-IP`
+
+https://[service-visit-EXTERNAL-IP]
 
 === ssl certificate with certbot ===
 
@@ -45,17 +57,6 @@ docker run --rm -it \
   --dns-route53 \
   -d visit.shrugcoding.click -m "rustam.mingazov@gmail.com" --agree-tos
 ```
-
-=== k8s ===
-
-```
-minikube start
-minikube tunnel
-kubectl create -f ./k8s --save-config --record
-kubectl delete -f ./k8s
-```
-
-access site with `service/service-visit` `EXTERNAL-IP`
 
 === resources ===
 

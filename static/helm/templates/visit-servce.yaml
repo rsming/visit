@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: {{ include "visit.fullname" . }}
+  name: {{ include "visit.fullname" . }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: "{{ .Values.service.port }}"
+      port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.port }}
+  selector:
+    app: {{ include "visit.fullname" . }}

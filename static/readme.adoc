@@ -47,6 +47,19 @@ access site with `service/service-visit` `EXTERNAL-IP`
 
 https://[service-visit-EXTERNAL-IP]
 
+=== run with helm ===
+
+```
+minikube start
+minikube tunnel
+helm install dev ./helm
+helm uninstall dev
+```
+
+access site with `service/dev-visit` `EXTERNAL-IP`
+
+https://[dev-visit-EXTERNAL-IP]
+
 === ssl certificate with certbot ===
 
 ```

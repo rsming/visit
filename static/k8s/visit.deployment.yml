@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: visit
+  name: deployment-visit
 spec:
   selector:
     matchLabels:
@@ -16,7 +16,6 @@ spec:
       - name: pod-visit
         image: rsming/visit:1.0
         ports:
-        - containerPort: 443
         - containerPort: 80
         resources:
           limits:

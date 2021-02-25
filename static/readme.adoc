@@ -21,9 +21,9 @@ Static HTML/CSS page dedicated to the International Hobbit Day (September the 22
 
 === run with docker ===
 
-`docker run --name hobbit.visit --detach --publish 8080:80 --publish 8443:443 rsming/visit:1.0`
+`docker run --name hobbit.visit --detach --publish 8080:80 rsming/visit:1.0`
 
-https://localhost:8443
+http://localhost:8080
 
 === run with cloudformation ===
 
@@ -38,14 +38,20 @@ https://visit.shrugcoding.click
 
 ```
 minikube start
-minikube tunnel
-kubectl create -f ./k8s --save-config --record
-kubectl delete -f ./k8s
+minikube addons enable ingress
+kubectl create namespace visit-ns
+kubectl create secret tls visit-secret -n=visit-ns --key=./ssh/live/visit.shrugcoding.click/privkey.pem --cert=./ssh/live/visit.shrugcoding.click/cert.pem
+kubectl create -n=visit-ns -f ./k8s --save-config --record
 ```
 
-access site with `service/service-visit` `EXTERNAL-IP`
+`kubectl get ingress -n=visit-ns`
 
-https://[service-visit-EXTERNAL-IP]
+get the `ADDRESS` for `ingress-visit` and add line `[ADDRESS] minikube.visit.shrugcoding.com` to `/etc/hosts`
+
+https://http://minikube.visit.shrugcoding.com/
+
+
+clean up: `kubectl delete namespaces visit-ns`
 
 === run with helm ===
 

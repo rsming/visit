@@ -1,6 +1,6 @@
 FROM nginx:stable-alpine
 
-COPY nginx/nginx.conf /etc/nginx/conf.d/nginx.conf
-COPY ssh/live/visit.shrugcoding.click/cert.pem    /etc/nginx/certs/visit-cert.pem
-COPY ssh/live/visit.shrugcoding.click/privkey.pem /etc/nginx/certs/visit-privkey.pem
+# COPY nginx/nginx.conf /etc/nginx/conf.d/nginx.conf
+# COPY ssh/live/visit.shrugcoding.click/cert.pem    /etc/nginx/certs/visit-cert.pem
+# COPY ssh/live/visit.shrugcoding.click/privkey.pem /etc/nginx/certs/visit-privkey.pem
 COPY site /usr/share/nginx/html

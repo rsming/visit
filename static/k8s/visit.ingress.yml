@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-visit
+  # annotations:
+  #   nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # nginx.ingress.kubernetes.io/app-root: /
+spec:
+  tls:
+    - hosts:
+      - visit.shrugcoding.com
+      # This assumes tls-secret exists and the SSL
+      # certificate contains a CN for foo.bar.com
+      secretName: visit-secret
+  rules:
+    - host: minikube.visit.shrugcoding.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: service-visit
+                port:
+                  number: 80

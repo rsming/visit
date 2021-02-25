@@ -48,7 +48,7 @@ kubectl create -n=visit-ns -f ./k8s --save-config --record
 
 get the `ADDRESS` for `ingress-visit` and add line `[ADDRESS] minikube.visit.shrugcoding.com` to `/etc/hosts`
 
-https://http://minikube.visit.shrugcoding.com/
+https://minikube.visit.shrugcoding.com/
 
 
 clean up: `kubectl delete namespaces visit-ns`

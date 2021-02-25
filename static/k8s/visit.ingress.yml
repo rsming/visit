@@ -5,10 +5,10 @@ metadata:
 spec:
   tls:
     - hosts:
-      - visit.shrugcoding.click
+      - k8s.visit.shrugcoding.click
       secretName: visit-secret
   rules:
-    - host: visit.shrugcoding.click
+    - host: k8s.visit.shrugcoding.click
       http:
         paths:
           - path: /

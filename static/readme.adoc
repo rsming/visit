@@ -46,9 +46,9 @@ kubectl create -n=visit-ns -f ./k8s --save-config --record
 
 `kubectl get ingress -n=visit-ns`
 
-get the `ADDRESS` for `ingress-visit` and add line `[ADDRESS] visit.shrugcoding.click` to `/etc/hosts`
+get the `ADDRESS` for `ingress-visit` and add line `[ADDRESS] k8s.visit.shrugcoding.click` to `/etc/hosts`
 
-https://visit.shrugcoding.click/
+https://k8s.visit.shrugcoding.click/
 
 
 clean up: `kubectl delete namespaces visit-ns`
@@ -74,7 +74,7 @@ docker run --rm -it \
   --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
   --volume "$PWD/ssh:/etc/letsencrypt" certbot/dns-route53 certonly \
   --dns-route53 \
-  -d visit.shrugcoding.click -m "rustam.mingazov@gmail.com" --agree-tos
+  -d visit.shrugcoding.click -d "*.visit.shrugcoding.click" -m "rustam.mingazov@gmail.com" --agree-tos
 ```
 
 === resources ===

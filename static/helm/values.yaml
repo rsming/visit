@@ -7,7 +7,7 @@ image:
 replicaCount: 3
 service:
   type: LoadBalancer
-  port: 443
+  port: 80
 ingress:
   enabled: true
   host: visit.127.0.0.1.xip.io

@@ -57,14 +57,20 @@ clean up: `kubectl delete namespaces visit-ns`
 
 ```
 minikube start
-minikube tunnel
-helm install dev ./helm
-helm uninstall dev
+minikube addons enable ingress
+kubectl create namespace visit-ns
+kubectl create secret tls visit-secret -n=visit-ns --key=./ssh/live/visit.shrugcoding.click/privkey.pem --cert=./ssh/live/visit.shrugcoding.click/cert.pem
+helm install dev ./helm -n=visit-ns --create-namespace
 ```
 
-access site with `service/dev-visit` `EXTERNAL-IP`
+`kubectl get ingress -n=visit-ns`
 
-https://[dev-visit-EXTERNAL-IP]
+get the `ADDRESS` for `ingress-visit` and add line `[ADDRESS] helm.visit.shrugcoding.click` to `/etc/hosts`
+
+https://helm.visit.shrugcoding.click/
+
+
+clean up: `helm uninstall dev -n=visit-ns`
 
 === ssl certificate with certbot ===
 

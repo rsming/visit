@@ -5,22 +5,87 @@
   \ V /| \__ \ | |_ 
    \_/ |_|___/_|\__|
                     
-¯\_(ツ)_/¯
+ ¯\_(ツ)_/¯ :: [html / css / bulma]
 ```
 
-= visit =
+== visit-static ==
 
-Static HTML/CSS, React and Vue applications dedicated to the International Hobbit Day (September the 22nd)
+Static HTML/CSS page dedicated to the International Hobbit Day (September the 22nd)
 
-=== child project ===
+=== build and push docker image ===
 
- - [visit-static-html-css](./static/)
- - [visit-vue](./vue/)
- - [visit-react](./react/)
+  . create ssl certificate: (see below: *ssl certificate with certbot*)
+  . create docker image: `docker build --tag rsming/visit:1.0 .`
+  . login to docker hub: `docker login --username=rsming`
+  . push image to docker hub: `docker push rsming/visit:1.0`
+
+=== run with docker ===
+
+`docker run --name hobbit.visit --detach --publish 8080:80 rsming/visit:1.0`
+
+http://localhost:8080
+
+=== run with cloudformation ===
+
+```
+aws cloudformation create-stack --template-body file://cloudformation/visit.cform.yaml --parameters file://cloudformation/dev.visit.json --stack-name visit --region us-east-1
+aws cloudformation delete-stack --stack-name visit --region us-east-1
+```
+
+https://visit.shrugcoding.click
+
+=== run with kubernetes ===
+
+```
+minikube start
+minikube addons enable ingress
+kubectl create namespace visit-ns
+kubectl create secret tls visit-secret -n=visit-ns --key=./ssh/live/visit.shrugcoding.click/privkey.pem --cert=./ssh/live/visit.shrugcoding.click/cert.pem
+kubectl create -n=visit-ns -f ./k8s --save-config --record
+```
+
+`kubectl get ingress -n=visit-ns`
+
+get the `ADDRESS` for `ingress-visit` and add line `[ADDRESS] k8s.visit.shrugcoding.click` to `/etc/hosts`
+
+https://k8s.visit.shrugcoding.click/
+
+
+clean up: `kubectl delete namespaces visit-ns`
+
+=== run with helm ===
+
+```
+minikube start
+minikube addons enable ingress
+kubectl create namespace visit-ns
+kubectl create secret tls visit-secret -n=visit-ns --key=./ssh/live/visit.shrugcoding.click/privkey.pem --cert=./ssh/live/visit.shrugcoding.click/cert.pem
+helm install dev ./helm -n=visit-ns --create-namespace
+```
+
+`kubectl get ingress -n=visit-ns`
+
+get the `ADDRESS` for `ingress-visit` and add line `[ADDRESS] helm.visit.shrugcoding.click` to `/etc/hosts`
+
+https://helm.visit.shrugcoding.click/
+
+
+clean up: `helm uninstall dev -n=visit-ns`
+
+=== ssl certificate with certbot ===
+
+```
+docker run --rm -it \
+  --env AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+  --env AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
+  --volume "$PWD/ssh:/etc/letsencrypt" certbot/dns-route53 certonly \
+  --dns-route53 \
+  -d visit.shrugcoding.click -d "*.visit.shrugcoding.click" -m "rustam.mingazov@gmail.com" --agree-tos
+```
 
 === resources ===
 
- - [Bulma](https://bulma.io/)
- - [Font Awesome](https://fontawesome.com/)
-
-
+  - [Docker Hub] (https://hub.docker.com/repository/docker/rsming/visit)
+  - [Bulma] (https://bulma.io/)
+  - [Font Awesome] (https://fontawesome.com/)
+  - [xip.io] http://xip.io/

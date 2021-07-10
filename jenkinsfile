@@ -42,7 +42,7 @@ pipeline {
                         if (params.AWS_VISIT_APP_STACK == 'deploy') {
                             sh """
                                 aws cloudformation deploy --parameter-overrides EnvironmentName=${AWS_ENV_NAME} \
-                                    --region ${AWS_REGION} --template-file networkstack.cform.json \
+                                    --region ${AWS_REGION} --template-file visit.cform.json \
                                     --stack-name ${AWS_APP_STACK_NAME}
                                 aws cloudformation wait stack-create-complete --region ${AWS_REGION} --stack-name ${AWS_APP_STACK_NAME}
                             """

@@ -5,7 +5,7 @@ pipeline {
         choice(name: 'AWS_VISIT_APP_STACK', choices: ['deploy', 'destroy','skip'], description: 'Create/destroy AWS visit application stack')
     }
     environment {
-        VISIT_DOCKER_IMAGE    ="rsming/visit:1.0"
+        VISIT_DOCKER_IMAGE    = 'rsming/visit:1.0'
         AWS_ACCESS_KEY_ID     = credentials('jenkins-aws-secret-key-id')
         AWS_SECRET_ACCESS_KEY = credentials('jenkins-aws-secret-access-key')
         AWS_ENV_NAME = 'dev'
@@ -20,7 +20,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', 'dockerhub') {
-                        docker build --tag ${VISIT_DOCKER_IMAGE} dockerfile
+                        docker build --tag ${VISIT_DOCKER_IMAGE} .
                         docker push ${VISIT_DOCKER_IMAGE}
                     }
                 }

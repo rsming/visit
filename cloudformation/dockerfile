@@ -1,0 +1,3 @@
+FROM amazon/aws-cli
+LABEL maintainer="rustam.mingazov@gmail.com"
+ENTRYPOINT []

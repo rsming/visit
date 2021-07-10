@@ -1,0 +1,164 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "stockreaper cloudformation template.",
+    "Parameters": {
+        "NetworkStack": {
+            "Description": "Preconfigured network stack",
+            "Type": "String",
+            "Default": "shrugcoding-network"
+        },
+        "HostedZoneName": {
+            "Description": "Do not forget to add '.' (period) at the end. For example \"shrugcoding.click.\"",
+            "Type": "String",
+            "Default": "shrugcoding.click."
+        },
+        "Subdomain": {
+            "Type": "String",
+            "Default": "visit"
+        },
+        "VisitCertificateARN": {
+            "Description": "ARN for certificate in the AWS Certificate Manager for domain names stockreaper.shrugcoding.click and api.stockreaper.shrugcoding.click",
+            "Type": "String",
+            "Default": "arn:aws:acm:us-east-1:204037222892:certificate/0277692d-7915-4049-81e9-be861ae1130f"
+        }
+    },
+    "Resources": {
+        "recsetVisit": {
+            "Type": "AWS::Route53::RecordSet",
+            "Properties": {
+                "Name": { "Fn::Join": [ ".", [ { "Ref": "Subdomain" }, { "Ref": "HostedZoneName" } ] ] },
+                "HostedZoneName": { "Ref": "HostedZoneName" },
+                "Type": "A",
+                "AliasTarget": {
+                    "DNSName" : { "Fn::GetAtt": [ "elbVisit", "DNSName" ] },
+                    "EvaluateTargetHealth" : true,
+                    "HostedZoneId" : { "Fn::GetAtt": [ "elbVisit", "CanonicalHostedZoneID" ] }
+                }
+            }
+        },
+        "elbVisit": {
+            "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
+            "Properties" : {
+                "IpAddressType" : "ipv4",
+                "Name" : "loadbalancer-visit",
+                "Subnets": [
+                    { "Fn::ImportValue": { "Fn::Sub": "${NetworkStack}-publicSubnet1" } } ,
+                    { "Fn::ImportValue": { "Fn::Sub": "${NetworkStack}-publicSubnet2" } } 
+                ],
+                "Type" : "application",
+                "SecurityGroups": [{ "Ref": "sgHttpsVisit" }]
+            }
+        },
+        "elbtgVisit" : {
+            "Type" : "AWS::ElasticLoadBalancingV2::TargetGroup",
+            "Properties" : {
+                "HealthCheckEnabled": true,
+                "Name": "targetgroup-visit",
+                "TargetType": "instance",
+                "Port": 80,
+                "Protocol": "HTTP",
+                "Targets": [{
+                    "Id" : { "Ref": "ec2iVisit" },
+                    "Port" : 80
+                }],
+                "VpcId": { "Fn::ImportValue": { "Fn::Sub": "${NetworkStack}-vpcShrugcoding" } }
+            }
+        },
+        "elblistVisit": {
+            "Type": "AWS::ElasticLoadBalancingV2::Listener",
+            "Properties": {
+                "DefaultActions": [{
+                    "Type": "fixed-response",
+                    "FixedResponseConfig": {
+                        "StatusCode": "200",
+                        "ContentType": "text/plain",
+                        "MessageBody": "Visit rules ¯\\_(ツ)_/¯"
+                    }
+                }],
+                "Certificates" : [ { "CertificateArn" : { "Ref": "VisitCertificateARN" } } ],
+                "LoadBalancerArn": { "Ref": "elbVisit" },
+                "Port": 443,
+                "Protocol": "HTTPS"
+            }
+        },
+        "listruleVisit": {
+            "Type" : "AWS::ElasticLoadBalancingV2::ListenerRule",
+            "Properties" : {
+                "Actions" : [{
+                    "Type": "forward",
+                    "ForwardConfig": { "TargetGroups": [{ "TargetGroupArn": { "Ref": "elbtgVisit" } }] }
+                }],
+                "Conditions" : [{
+                    "Field": "host-header",
+                    "HostHeaderConfig": { "Values": [ "visit.*" ] }
+                }],
+                "ListenerArn" : { "Ref": "elblistVisit" },
+                "Priority" : 1
+              }
+        },
+        "ec2iVisit": {
+            "Type": "AWS::EC2::Instance",
+            "Properties": {
+                "SubnetId": {
+                    "Fn::ImportValue": {
+                        "Fn::Sub": "${NetworkStack}-publicSubnet1"
+                    }
+                },
+                "KeyName": "visit-key",
+                "DisableApiTermination": false,
+                "ImageId": "ami-0be2609ba883822ec",
+                "InstanceType": "t2.nano",
+                "Monitoring": false,
+                "SecurityGroupIds": [ { "Ref": "sgSshHttpVisit" } ],
+                "UserData": {
+                    "Fn::Base64": "#!/bin/bash -ex\nyum update -y\namazon-linux-extras install docker\nservice docker start\nusermod -a -G docker ec2-user\ndocker run --detach --publish 80:80 rsming/visit:1.0\n"
+                },
+                "Tags": [ { "Key": "Name", "Value": "visit" } ]
+            }
+        },
+        "sgHttpsVisit": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupName": "https-access-visit",
+                "GroupDescription": "HTTPS access visit",
+                "VpcId": { "Fn::ImportValue": { "Fn::Sub": "${NetworkStack}-vpcShrugcoding" } },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "CidrIp": "0.0.0.0/0",
+                        "FromPort": 443,
+                        "ToPort": 443
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "https-access-visit"
+                    }
+                ]
+            }
+        },
+        "sgSshHttpVisit": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupName": "http-access-visit",
+                "GroupDescription": "HTTP and ssh access visit",
+                "VpcId": { "Fn::ImportValue": { "Fn::Sub": "${NetworkStack}-vpcShrugcoding" } },
+                "SecurityGroupIngress": [
+                    {
+                        "IpProtocol": "tcp",
+                        "SourceSecurityGroupId": { "Ref": "sgHttpsVisit" },
+                        "FromPort": 80,
+                        "ToPort": 80
+                    }
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "http-access-visit"
+                    }
+                ]
+            }
+        }
+    } 
+}

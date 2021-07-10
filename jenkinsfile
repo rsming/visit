@@ -2,7 +2,7 @@ pipeline {
     agent none
     parameters {
         booleanParam(name: 'BUILD', defaultValue: true, description: 'Build / deploy visit')
-        choice(name: 'AWS_VISIT_APP_STACK', choices: ['deploy', 'destroy'], description: 'Create/destroy AWS visit application stack')
+        choice(name: 'AWS_VISIT_APP_STACK', choices: ['deploy', 'destroy','skip'], description: 'Create/destroy AWS visit application stack')
     }
     environment {
         VISIT_DOCKER_IMAGE    ="rsming/visit:1.0"

@@ -1,6 +1,6 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "stockreaper cloudformation template.",
+    "Description": "visit cloudformation template.",
     "Parameters": {
         "NetworkStack": {
             "Description": "Preconfigured network stack",
@@ -17,7 +17,7 @@
             "Default": "visit"
         },
         "VisitCertificateARN": {
-            "Description": "ARN for certificate in the AWS Certificate Manager for domain names stockreaper.shrugcoding.click and api.stockreaper.shrugcoding.click",
+            "Description": "ARN for certificate in the AWS Certificate Manager for domain names visit.shrugcoding.click",
             "Type": "String",
             "Default": "arn:aws:acm:us-east-1:204037222892:certificate/0277692d-7915-4049-81e9-be861ae1130f"
         }

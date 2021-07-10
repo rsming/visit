@@ -20,8 +20,10 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('', 'dockerhub') {
-                        docker build --tag ${VISIT_DOCKER_IMAGE} .
-                        docker push ${VISIT_DOCKER_IMAGE}
+                        sh """
+                            docker build --tag ${VISIT_DOCKER_IMAGE} .
+                            docker push ${VISIT_DOCKER_IMAGE}
+                        """
                     }
                 }
             }
